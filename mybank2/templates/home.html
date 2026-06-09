@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MY BANK | Login</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ===== HEADER ===== */
+      header {
+        height: 70px;
+        background: #020617;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo img {
+        height: 40px;
+      }
+
+      .logo h2 {
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+      nav button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 20px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.3s;
+      }
+
+      nav button:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+      }
+
+      /* ===== MAIN ===== */
+      main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1000px;
+        background: white;
+        border-radius: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      /* ===== LEFT TEXT ===== */
+      .info {
+        background: linear-gradient(135deg, #1e40af, #2563eb);
+        color: white;
+        padding: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .info h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+
+      .info p {
+        line-height: 1.7;
+        opacity: 0.95;
+      }
+
+      /* ===== FORM ===== */
+      .forms {
+        padding: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .form {
+        width: 100%;
+        max-width: 360px;
+        display: none;
+        flex-direction: column;
+        gap: 14px;
+        animation: fadeIn 0.4s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .form.active {
+        display: flex;
+      }
+
+      .form h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #0f172a;
+      }
+
+      .form select,
+      .form input {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 14px;
+      }
+
+      .form select:focus,
+      .form input:focus {
+        outline: none;
+        border-color: #2563eb;
+      }
+
+      .form-btns {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .form-btns button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.3s;
+      }
+
+      .form-btns button:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+      }
+
+      /* ===== FOOTER ===== */
+      footer {
+        height: 45px;
+        background: #020617;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header>
+      <div class="logo">
+        <img src="static/assets/logo.png" />
+        <h2>MY BANK</h2>
+      </div>
+      <nav>
+        <button onclick="showLogin()">Login</button>
+        <button onclick="showSignup()">Signup</button>
+      </nav>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+      <div class="container">
+        <!-- LEFT -->
+        <div class="info">
+          <h2>Welcome to MY BANK</h2>
+          <p>
+            Secure digital banking platform for customers and administrators.
+            Manage accounts, transactions and customers with ease.
+          </p>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="forms">
+          <!-- LOGIN -->
+          <form
+            class="form active"
+            id="login-form"
+            action="/login"
+            method="POST"
+          >
+            <h1>Login</h1>
+            <select name="option" required>
+              <option value="">Login As</option>
+              <option value="Admin">Admin</option>
+              <option value="User">User</option>
+            </select>
+            <input
+              type="text"
+              name="user"
+              placeholder="User ID / Account No"
+              required
+            />
+            <input
+              type="password"
+              name="pass"
+              placeholder="Password"
+              required
+            />
+
+            <div class="form-btns">
+              <button type="submit">Login</button>
+              <button type="button" onclick="showSignup()">Signup</button>
+            </div>
+          </form>
+
+          <!-- SIGNUP -->
+
+          <form class="form" id="signup-form" action="/submit" method="POST">
+            <h1>Admin Signup</h1>
+
+            <select name="option" required>
+              <option value="Admin">Admin</option>
+            </select>
+
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="text" name="user" placeholder="User ID" required />
+            <input
+              type="password"
+              name="pass"
+              placeholder="Password"
+              required
+            />
+
+            <div class="form-btns">
+              <button type="submit">Create</button>
+              <button type="button" onclick="showLogin()">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>© 2025 MY BANK | All Rights Reserved</footer>
+
+    <!-- SCRIPT -->
+    <script>
+      const loginForm = document.getElementById("login-form");
+      const signupForm = document.getElementById("signup-form");
+
+      function showSignup() {
+        loginForm.classList.remove("active");
+        signupForm.classList.add("active");
+      }
+
+      function showLogin() {
+        signupForm.classList.remove("active");
+        loginForm.classList.add("active");
+      }
+    </script>
+  </body>
+</html>

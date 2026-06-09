@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Customer Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/customerDashboard.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="brand">🏦 MY BANK</div>
+      <div class="welcome">Welcome, {{ customer.name }}</div>
+      <a href="{{ url_for('customerLogout') }}">
+        <button class="logout-btn">Logout</button>
+      </a>
+    </header>
+
+    <!-- MAIN -->
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <button onclick="show('profile')">👤 Profile</button>
+        <button onclick="show('deposit')">💰 Deposit</button>
+        <button onclick="show('withdraw')">🏧 Withdraw</button>
+        <button onclick="show('transfer')">🔁 Transfer</button>
+        <button onclick="show('transactions')">📄 Transactions</button>
+        <button onclick="show('password')">🔒 Change Password</button>
+      </aside>
+
+      <!-- CONTENT -->
+      <section class="content">
+        <!-- PROFILE -->
+        <div id="profile" class="box active card">
+          <h2>Account Profile</h2>
+          <p><b>Account No:</b> {{ customer.accno }}</p>
+          <p><b>Name:</b> {{ customer.name }}</p>
+          <p><b>Email:</b> {{ customer.email }}</p>
+          <p class="balance"><b>Balance:</b> ₹{{ customer.balance }}</p>
+        </div>
+
+        <!-- DEPOSIT -->
+        <div id="deposit" class="box card">
+          <h2>Deposit Money</h2>
+          <form action="/customer/deposit" method="POST">
+            <input
+              name="amount"
+              type="number"
+              required
+              placeholder="Enter amount"
+            />
+            <button class="primary-btn">Deposit</button>
+          </form>
+        </div>
+
+        <!-- WITHDRAW -->
+        <div id="withdraw" class="box card">
+          <h2>Withdraw Money</h2>
+          <form action="/customer/withdraw" method="POST">
+            <input
+              name="amount"
+              type="number"
+              required
+              placeholder="Enter amount"
+            />
+            <button class="danger-btn">Withdraw</button>
+          </form>
+        </div>
+
+        <!-- TRANSFER -->
+        <div id="transfer" class="box card">
+          <h2>Transfer Money</h2>
+          <form action="/customer/transfer" method="POST">
+            <input
+              name="receiver"
+              required
+              placeholder="Receiver Account Number"
+            />
+            <input name="amount" type="number" required placeholder="Amount" />
+            <button class="primary-btn">Transfer</button>
+          </form>
+        </div>
+
+        <!-- TRANSACTIONS -->
+        <div id="transactions" class="box card">
+          <div class="txn-header">
+            <h2>Last 10 Transactions</h2>
+            <a href="/customer/download-transactions">
+              <button class="secondary-btn">⬇ Download</button>
+            </a>
+          </div>
+
+          <table>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance</th>
+            </tr>
+            {% for t in transactions %}
+            <tr>
+              <td>{{ t.created_at }}</td>
+              <td>{{ t.type }}</td>
+              <td>₹{{ t.amount }}</td>
+              <td>₹{{ t.balance }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        <!-- PASSWORD -->
+        <div id="password" class="box card">
+          <h2>Change Password</h2>
+          <form action="/customer/updatePassword" method="POST">
+            <input
+              name="newpass"
+              type="password"
+              required
+              placeholder="New Password"
+            />
+            <button class="primary-btn">Update Password</button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      function show(id) {
+        document
+          .querySelectorAll(".box")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+    </script>
+  </body>
+</html>

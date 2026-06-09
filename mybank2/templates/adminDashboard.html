@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #f4f6f9;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        background: #0f172a;
+        color: #fff;
+      }
+
+      .sidebar {
+        width: 230px;
+        background: #1e293b;
+        padding: 20px;
+        height: 100vh;
+      }
+
+      .sidebar button {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #334155;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+      }
+
+      .sidebar button:hover {
+        background: #475569;
+      }
+
+      main {
+        display: flex;
+      }
+
+      .content {
+        flex: 1;
+        padding: 30px;
+      }
+
+      .content-section {
+        display: none;
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+      }
+
+      th {
+        background: #0f172a;
+        color: #fff;
+      }
+
+      .form-section {
+        background: #fff;
+        padding: 20px;
+        max-width: 450px;
+        border-radius: 8px;
+      }
+
+      .form-section input,
+      .form-section select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .form-section button {
+        width: 100%;
+        padding: 10px;
+        background: #0f172a;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      /* 🔥 SEARCH INPUT CSS */
+      .search-box {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .search-box input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+      }
+
+      .search-box button {
+        padding: 10px 20px;
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .search-box button:hover {
+        background: #1e40af;
+      }
+
+      footer {
+        text-align: center;
+        padding: 10px;
+        background: #0f172a;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h2>MY BANK - Admin</h2>
+      <h3>Welcome {{ session.admin }}</h3>
+      <div class="logout">
+        <a href="{{ url_for('adminLogout') }}">
+          <button class="logout-btn">Logout</button>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <aside class="sidebar">
+        <button onclick="showSection('section1')">View Customers</button>
+        <button onclick="showSection('section6')">Create Customer</button>
+        <button onclick="showSection('section2')">Withdraw</button>
+        <button onclick="showSection('section5')">Deposit</button>
+        <button onclick="showSection('section3')">Transfer</button>
+        <button onclick="showSection('section7')">View Transactions</button>
+      </aside>
+
+      <section class="content">
+        <!-- VIEW CUSTOMERS -->
+        <div id="section1" class="content-section">
+          <h2>All Customers</h2>
+          <br />
+          <table>
+            <tr>
+              <th>ACC</th>
+              <th>Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>Balance</th>
+              <th>Actions</th>
+            </tr>
+            {% for c in customers %}
+            <tr>
+              <td>{{c.accno}}</td>
+              <td>{{c.name}}</td>
+              <td>{{c.mobile}}</td>
+              <td>{{c.email}}</td>
+              <td>{{c.balance}}</td>
+              <td>
+                <button onclick="editCustomer('{{c.accno}}')">Update</button>
+                <button onclick="deleteCustomer('{{c.accno}}')">Delete</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        <!-- WITHDRAW -->
+        <div id="section2" class="content-section">
+          <div class="form-section">
+            <form
+              action="/admin/withdraw"
+              method="POST"
+              onsubmit="saveSection('section2')"
+            >
+              <h3>With Draw</h3>
+              <input name="acc" placeholder="Account Number" required />
+              <input name="amt" placeholder="Amount" required />
+              <button>Withdraw</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- DEPOSIT -->
+        <div id="section5" class="content-section">
+          <div class="form-section">
+            <form
+              action="/admin/deposit"
+              method="POST"
+              onsubmit="saveSection('section5')"
+            >
+              <h3>Deposite</h3>
+              <input name="acc" placeholder="Account Number" required />
+              <input name="amt" placeholder="Amount" required />
+              <button>Deposit</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- UPDATE CUSTOMER (HIDDEN) -->
+        <div id="updateCustomerForm" class="content-section">
+          <div class="form-section">
+            <form
+              action="/admin/updateCustomer"
+              method="POST"
+              onsubmit="saveSection('section1')"
+            >
+              <h3>Update Customer</h3>
+
+              <input type="hidden" name="accno" id="updateAccno" />
+
+              <input
+                type="text"
+                name="name"
+                id="updateName"
+                placeholder="Name"
+                required
+              />
+              <input
+                type="text"
+                name="mobile"
+                id="updateMobile"
+                placeholder="Mobile"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                id="updateEmail"
+                placeholder="Email"
+                required
+              />
+              <input
+                type="number"
+                name="balance"
+                id="updateBalance"
+                placeholder="Balance"
+                required
+                hidden
+              />
+
+              <button type="submit">Update Customer</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- TRANSFER -->
+        <div id="section3" class="content-section">
+          <div class="form-section">
+            <form
+              action="/admin/transfer"
+              method="POST"
+              onsubmit="saveSection('section3')"
+            >
+              <h3>Transfer Amount</h3>
+              <input name="sender" placeholder="Sender Account" required />
+              <input name="receiver" placeholder="Receiver Account" required />
+              <input name="amt" placeholder="Amount" required />
+              <button>Transfer</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- CHANGE PASSWORD -->
+        <div id="section4" class="content-section">
+          <div class="form-section">
+            <form
+              action="/changePassword"
+              method="POST"
+              onsubmit="saveSection('section4')"
+            >
+              <input name="old" placeholder="Old Password" required />
+              <input name="new" placeholder="New Password" required />
+              <button>Update Password</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- CREATE CUSTOMER -->
+        <div id="section6" class="content-section">
+          <div class="form-section">
+            <form
+              action="/admin/createCustomer"
+              method="POST"
+              onsubmit="saveSection('section6')"
+            >
+              <h3>Create Customer</h3>
+
+              <input
+                type="text"
+                name="accno"
+                placeholder="Account Number"
+                required
+              />
+              <input type="text" name="name" placeholder="Name" required />
+              <input type="text" name="mobile" placeholder="Mobile" required />
+              <input type="email" name="email" placeholder="Email" required />
+              <input
+                type="number"
+                name="balance"
+                placeholder="Balance"
+                required
+              />
+
+              <button type="submit">Create Customer</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- VIEW TRANSACTIONS -->
+        <div id="section7" class="content-section">
+          <h2>Transactions</h2>
+
+          <form
+            action="/admin/viewTransactions"
+            method="POST"
+            onsubmit="saveSection('section7')"
+          >
+            <div class="search-box">
+              <input name="accno" placeholder="Account Number (Optional)" />
+              <select name="type">
+                <option value="ALL">All</option>
+                <option value="DEPOSIT">Deposit</option>
+                <option value="WITHDRAW">Withdraw</option>
+                <option value="TRANSFER">Transfer</option>
+              </select>
+              <button>Search</button>
+            </div>
+          </form>
+
+          {% if transactions %}
+          <table>
+            <tr>
+              <th>Acc</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance</th>
+              <th>Date</th>
+            </tr>
+            {% for t in transactions %}
+            <tr>
+              <td>{{t.accno}}</td>
+              <td>{{t.type}}</td>
+              <td>{{t.amount}}</td>
+              <td>{{t.balance}}</td>
+              <td>{{t.created_at}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+
+    <footer>© 2025 MY BANK</footer>
+
+    <script>
+      function showSection(id) {
+        localStorage.setItem("activeSection", id);
+        document
+          .querySelectorAll(".content-section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+
+      function saveSection(id) {
+        localStorage.setItem("activeSection", id);
+        alert("Action submitted successfully!");
+      }
+
+      window.onload = () => {
+        const sec = localStorage.getItem("activeSection") || "section1";
+        showSection(sec);
+      };
+
+      function deleteCustomer(acc) {
+        if (confirm("Delete customer?")) {
+          window.location.href = `/admin/deleteCustomer/${acc}`;
+        }
+      }
+
+      function editCustomer(accno) {
+        fetch(`/admin/getCustomer/${accno}`)
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("updateAccno").value = data.accno;
+            document.getElementById("updateName").value = data.name;
+            document.getElementById("updateMobile").value = data.mobile;
+            document.getElementById("updateEmail").value = data.email;
+            document.getElementById("updateBalance").value = data.balance;
+
+            showSection("updateCustomerForm"); // 🔥 NOW IT EXISTS
+          })
+          .catch(() => alert("Failed to fetch customer details"));
+      }
+    </script>
+  </body>
+</html>
